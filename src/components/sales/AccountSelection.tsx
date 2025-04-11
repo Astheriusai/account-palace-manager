@@ -220,14 +220,14 @@ const AccountSelection = ({ selectedProducts, onNext }: AccountSelectionProps) =
                     <span className="font-medium">#{index + 1}</span>
                     <Select 
                       onValueChange={(value) => handleAccountSelect(productItem.product.id, index, value, productItem.type)}
-                      value={getSelectedAccount(productItem.product.id, index, productItem.type)?.id || ""}
+                      value={getSelectedAccount(productItem.product.id, index, productItem.type)?.id?.toString() || ""}
                     >
                       <SelectTrigger className="flex-1">
                         <SelectValue placeholder="Seleccionar cuenta" />
                       </SelectTrigger>
                       <SelectContent>
                         {getAvailableAccounts(productItem.product.id, productItem.type).map(account => (
-                          <SelectItem key={account.id} value={String(account.id)}>
+                          <SelectItem key={String(account.id)} value={String(account.id)}>
                             {account.email}
                           </SelectItem>
                         ))}
@@ -253,7 +253,7 @@ const AccountSelection = ({ selectedProducts, onNext }: AccountSelectionProps) =
                           {getSelectedAccount(productItem.product.id, index, "profile")?.profiles
                             .filter(profile => !profile.assigned)
                             .map(profile => (
-                              <SelectItem key={profile.id} value={String(profile.id)}>
+                              <SelectItem key={String(profile.id)} value={String(profile.id)}>
                                 {profile.name}
                               </SelectItem>
                           ))}
