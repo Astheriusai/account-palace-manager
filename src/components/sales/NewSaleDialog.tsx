@@ -17,6 +17,7 @@ import ProductSelection from "./ProductSelection";
 import AccountSelection from "./AccountSelection";
 import SaleSummary from "./SaleSummary";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface ProductSelection {
   product: Product;
@@ -37,6 +38,7 @@ const NewSaleDialog = ({ open, onOpenChange, clients, products }: NewSaleDialogP
   const [saleType, setSaleType] = useState<SaleType | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<ProductSelection[]>([]);
   const [creatingOrder, setCreatingOrder] = useState(false);
+  const isMobile = useIsMobile();
   
   const resetDialog = () => {
     setStep(1);
@@ -123,10 +125,10 @@ const NewSaleDialog = ({ open, onOpenChange, clients, products }: NewSaleDialogP
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className={`${isMobile ? 'w-[95%] max-w-none p-4' : 'sm:max-w-[600px]'} overflow-y-auto max-h-[90vh]`}>
         <DialogHeader>
-          <DialogTitle>Nueva Venta</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-center sm:text-left">Nueva Venta</DialogTitle>
+          <DialogDescription className="text-center sm:text-left">
             {step === 1 && "Selecciona un cliente para esta venta"}
             {step === 2 && "Selecciona el tipo de venta"}
             {step === 3 && "Selecciona productos y cantidades"}
