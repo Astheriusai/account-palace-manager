@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Client, createClient } from "@/services/clientService";
+import { Client, CreateClientData, createClient, updateClient } from "@/services/clientService";
 import { toast } from "sonner";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,42 +35,70 @@ type ClientFormValues = z.infer<typeof clientSchema>;
 interface ClientDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onClientCreated?: (client: Client) => void;
+  client?: Client; // The client to edit, if provided
+  onClientSaved?: (client: Client) => void;
 }
 
 export default function ClientDialog({
   open,
   onOpenChange,
-  onClientCreated,
+  client,
+  onClientSaved,
 }: ClientDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isEditing = !!client;
 
   const form = useForm<ClientFormValues>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
+      name: client?.name || "",
+      email: client?.email || "",
+      phone: client?.phone || "",
     },
   });
+
+  // Reset form when dialog opens/closes or client changes
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        name: client?.name || "",
+        email: client?.email || "",
+        phone: client?.phone || "",
+      });
+    }
+  }, [open, client, form]);
 
   async function onSubmit(data: ClientFormValues) {
     try {
       setIsSubmitting(true);
-      const newClient = await createClient({
-        name: data.name,
-        email: data.email || null,
-        phone: data.phone || null,
-      });
-      toast.success("Cliente creado con éxito");
-      if (onClientCreated) {
-        onClientCreated(newClient);
+      
+      let savedClient: Client;
+      if (isEditing && client) {
+        // Update existing client
+        savedClient = await updateClient(client.id, {
+          name: data.name,
+          email: data.email || null,
+          phone: data.phone || null,
+        });
+        toast.success("Cliente actualizado con éxito");
+      } else {
+        // Create new client
+        savedClient = await createClient({
+          name: data.name,
+          email: data.email || null,
+          phone: data.phone || null,
+        });
+        toast.success("Cliente creado con éxito");
+      }
+      
+      if (onClientSaved) {
+        onClientSaved(savedClient);
       }
       form.reset();
       onOpenChange(false);
     } catch (error) {
-      console.error("Error creating client:", error);
-      toast.error("Error al crear el cliente");
+      console.error("Error saving client:", error);
+      toast.error(isEditing ? "Error al actualizar el cliente" : "Error al crear el cliente");
     } finally {
       setIsSubmitting(false);
     }
@@ -80,9 +108,11 @@ export default function ClientDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Nuevo Cliente</DialogTitle>
+          <DialogTitle>{isEditing ? "Editar Cliente" : "Nuevo Cliente"}</DialogTitle>
           <DialogDescription>
-            Completa el formulario para agregar un nuevo cliente.
+            {isEditing 
+              ? "Modifica los datos del cliente." 
+              : "Completa el formulario para agregar un nuevo cliente."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>

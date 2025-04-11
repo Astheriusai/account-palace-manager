@@ -18,16 +18,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { MoreHorizontal, Plus, Search, ShoppingBag, Pencil, Trash2 } from "lucide-react";
-import { Client, getClients } from "@/services/clientService";
+import { Client, getClients, deleteClient } from "@/services/clientService";
 import ClientDialog from "@/components/clients/ClientDialog";
-import { useToast } from "@/hooks/use-toast";
+import DeleteClientDialog from "@/components/clients/DeleteClientDialog";
+import { toast } from "sonner";
 
 export default function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [clientDialogOpen, setClientDialogOpen] = useState(false);
-  const { toast } = useToast();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchClients();
@@ -40,18 +43,60 @@ export default function Clients() {
       setClients(fetchedClients);
     } catch (error) {
       console.error("Error fetching clients:", error);
-      toast({
-        title: "Error",
-        description: "No se pudieron cargar los clientes",
-        variant: "destructive",
-      });
+      toast.error("No se pudieron cargar los clientes");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleClientCreated = (newClient: Client) => {
-    setClients((prevClients) => [...prevClients, newClient]);
+  const handleClientSaved = (updatedClient: Client) => {
+    if (selectedClient) {
+      // Editing existing client
+      setClients(prevClients => 
+        prevClients.map(client => 
+          client.id === updatedClient.id ? updatedClient : client
+        )
+      );
+    } else {
+      // Creating new client
+      setClients(prevClients => [...prevClients, updatedClient]);
+    }
+    
+    // Reset selected client
+    setSelectedClient(null);
+  };
+
+  const handleEditClient = (client: Client) => {
+    setSelectedClient(client);
+    setClientDialogOpen(true);
+  };
+
+  const handleDeleteClick = (client: Client) => {
+    setSelectedClient(client);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedClient) return;
+    
+    try {
+      setIsDeleting(true);
+      await deleteClient(selectedClient.id);
+      
+      // Remove client from state
+      setClients(prevClients => 
+        prevClients.filter(client => client.id !== selectedClient.id)
+      );
+      
+      toast.success("Cliente eliminado con éxito");
+      setDeleteDialogOpen(false);
+      setSelectedClient(null);
+    } catch (error) {
+      console.error("Error deleting client:", error);
+      toast.error("Error al eliminar el cliente");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const filteredClients = clients.filter(client =>
@@ -64,7 +109,10 @@ export default function Clients() {
     <PageLayout>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
-        <Button className="gap-2" onClick={() => setClientDialogOpen(true)}>
+        <Button className="gap-2" onClick={() => {
+          setSelectedClient(null);
+          setClientDialogOpen(true);
+        }}>
           <Plus className="h-4 w-4" />
           Nuevo Cliente
         </Button>
@@ -112,13 +160,19 @@ export default function Clients() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem className="gap-2">
+                        <DropdownMenuItem 
+                          className="gap-2 cursor-pointer"
+                          onClick={() => handleEditClient(client)}
+                        >
                           <Pencil className="h-4 w-4" /> Editar
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2">
+                        <DropdownMenuItem className="gap-2 cursor-pointer">
                           <ShoppingBag className="h-4 w-4" /> Ver compras
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2 text-destructive">
+                        <DropdownMenuItem 
+                          className="gap-2 text-destructive cursor-pointer"
+                          onClick={() => handleDeleteClick(client)}
+                        >
                           <Trash2 className="h-4 w-4" /> Eliminar
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -155,7 +209,16 @@ export default function Clients() {
       <ClientDialog 
         open={clientDialogOpen}
         onOpenChange={setClientDialogOpen}
-        onClientCreated={handleClientCreated}
+        client={selectedClient || undefined}
+        onClientSaved={handleClientSaved}
+      />
+
+      <DeleteClientDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        clientName={selectedClient?.name || ""}
+        isDeleting={isDeleting}
       />
     </PageLayout>
   );
