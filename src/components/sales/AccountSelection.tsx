@@ -227,7 +227,7 @@ const AccountSelection = ({ selectedProducts, onNext }: AccountSelectionProps) =
                       </SelectTrigger>
                       <SelectContent>
                         {getAvailableAccounts(productItem.product.id, productItem.type).map(account => (
-                          <SelectItem key={account.id} value={account.id}>
+                          <SelectItem key={account.id} value={String(account.id)}>
                             {account.email}
                           </SelectItem>
                         ))}
@@ -241,7 +241,7 @@ const AccountSelection = ({ selectedProducts, onNext }: AccountSelectionProps) =
                         onValueChange={(value) => {
                           const account = getSelectedAccount(productItem.product.id, index, productItem.type);
                           if (account) {
-                            handleProfileSelect(productItem.product.id, account.id, index, value);
+                            handleProfileSelect(productItem.product.id, String(account.id), index, value);
                           }
                         }}
                         value={getSelectedProfile(productItem.product.id, index) || ""}
@@ -253,7 +253,7 @@ const AccountSelection = ({ selectedProducts, onNext }: AccountSelectionProps) =
                           {getSelectedAccount(productItem.product.id, index, "profile")?.profiles
                             .filter(profile => !profile.assigned)
                             .map(profile => (
-                              <SelectItem key={profile.id} value={profile.id}>
+                              <SelectItem key={profile.id} value={String(profile.id)}>
                                 {profile.name}
                               </SelectItem>
                           ))}

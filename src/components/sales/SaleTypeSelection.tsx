@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { SaleType } from "@/services/salesService";
-import { Package, Monitor, Mix } from "lucide-react";
+import { Package, Monitor, Layers } from "lucide-react";
 
 interface SaleTypeSelectionProps {
   onSaleTypeSelect: (type: SaleType) => void;
