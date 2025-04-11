@@ -68,6 +68,12 @@ export default function ClientDialog({
     }
   }, [open, client, form]);
 
+  const handleClose = (open: boolean) => {
+    if (!isSubmitting) {
+      onOpenChange(open);
+    }
+  };
+
   async function onSubmit(data: ClientFormValues) {
     try {
       setIsSubmitting(true);
@@ -105,8 +111,8 @@ export default function ClientDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[425px] overflow-hidden">
         <DialogHeader>
           <DialogTitle>{isEditing ? "Editar Cliente" : "Nuevo Cliente"}</DialogTitle>
           <DialogDescription>
@@ -164,7 +170,12 @@ export default function ClientDialog({
               )}
             />
             <DialogFooter>
-              <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
+              <Button 
+                variant="outline" 
+                type="button" 
+                onClick={() => onOpenChange(false)}
+                disabled={isSubmitting}
+              >
                 Cancelar
               </Button>
               <Button type="submit" disabled={isSubmitting}>

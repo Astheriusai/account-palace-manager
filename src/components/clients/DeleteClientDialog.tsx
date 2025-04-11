@@ -25,9 +25,15 @@ export default function DeleteClientDialog({
   clientName,
   isDeleting
 }: DeleteClientDialogProps) {
+  const handleClose = () => {
+    if (!isDeleting) {
+      onOpenChange(false);
+    }
+  };
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+    <AlertDialog open={open} onOpenChange={handleClose}>
+      <AlertDialogContent className="overflow-hidden">
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar cliente?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -35,7 +41,7 @@ export default function DeleteClientDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
           <AlertDialogAction 
             onClick={onConfirm} 
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
