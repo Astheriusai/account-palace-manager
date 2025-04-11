@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -125,10 +124,10 @@ const NewSaleDialog = ({ open, onOpenChange, clients, products }: NewSaleDialogP
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className={`${isMobile ? 'w-[95%] max-w-none p-4' : 'sm:max-w-[600px]'} overflow-y-auto max-h-[90vh]`}>
-        <DialogHeader>
-          <DialogTitle className="text-center sm:text-left">Nueva Venta</DialogTitle>
-          <DialogDescription className="text-center sm:text-left">
+      <DialogContent className={`${isMobile ? 'w-[95%] p-3' : 'w-[90%] sm:max-w-[550px] p-4'} overflow-y-auto max-h-[90vh]`}>
+        <DialogHeader className="text-center">
+          <DialogTitle className="text-xl sm:text-2xl font-bold">Nueva Venta</DialogTitle>
+          <DialogDescription className="text-center text-sm sm:text-base mx-auto max-w-[90%]">
             {step === 1 && "Selecciona un cliente para esta venta"}
             {step === 2 && "Selecciona el tipo de venta"}
             {step === 3 && "Selecciona productos y cantidades"}
@@ -137,21 +136,24 @@ const NewSaleDialog = ({ open, onOpenChange, clients, products }: NewSaleDialogP
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4">
-          {renderStepContent()}
+        <div className="py-2 sm:py-4 flex justify-center">
+          <div className="w-full max-w-md">
+            {renderStepContent()}
+          </div>
         </div>
 
-        <div className="flex justify-between mt-4">
-          {step > 1 && (
+        <div className="flex justify-between mt-2 sm:mt-4">
+          {step > 1 ? (
             <Button variant="outline" onClick={handleBackClick} disabled={creatingOrder}>
               Atrás
             </Button>
-          )}
-          {step === 1 && (
+          ) : (
             <Button variant="outline" onClick={handleClose}>
               Cancelar
             </Button>
           )}
+          {/* El botón de siguiente paso se maneja dentro de cada componente de paso */}
+          <div className="w-4"></div> {/* Espaciador para mantener la alineación */}
         </div>
       </DialogContent>
     </Dialog>
