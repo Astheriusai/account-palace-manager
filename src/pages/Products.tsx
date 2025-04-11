@@ -1,16 +1,27 @@
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, Plus } from "lucide-react";
-import { getProducts, Product } from "@/services/productService";
+import { 
+  Dialog, DialogContent, DialogDescription, DialogFooter, 
+  DialogHeader, DialogTitle 
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Package, Plus, Pencil } from "lucide-react";
+import { getProducts, Product, updateProduct } from "@/services/productService";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -33,11 +44,41 @@ export default function Products() {
     loadProducts();
   }, [toast]);
 
+  const handleEditProduct = (product: Product) => {
+    setCurrentProduct(product);
+    setOpen(true);
+  };
+
   const handleNewProduct = () => {
     toast({
       title: "Funcionalidad en desarrollo",
       description: "La creación de nuevos productos estará disponible próximamente.",
     });
+  };
+
+  const handleSaveProduct = async () => {
+    if (!currentProduct) return;
+    
+    try {
+      await updateProduct(currentProduct);
+      setProducts(products.map(p => p.id === currentProduct.id ? currentProduct : p));
+      toast({
+        title: "Producto actualizado",
+        description: "Los cambios han sido guardados correctamente.",
+      });
+      setOpen(false);
+    } catch (error) {
+      console.error('Error updating product:', error);
+      toast({
+        title: "Error al actualizar",
+        description: "No se pudo actualizar el producto. Intente nuevamente.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleManageAccounts = (productId: string) => {
+    navigate(`/accounts?productId=${productId}`);
   };
 
   return (
@@ -78,7 +119,12 @@ export default function Products() {
             products.map((product) => (
               <Card key={product.id}>
                 <CardHeader className="pb-3">
-                  <CardTitle>{product.name}</CardTitle>
+                  <div className="flex justify-between items-center">
+                    <CardTitle>{product.name}</CardTitle>
+                    <Button variant="ghost" size="sm" onClick={() => handleEditProduct(product)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </div>
                   <CardDescription>{product.maxProfiles} perfiles máximo por cuenta</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -90,7 +136,9 @@ export default function Products() {
                         <p className="text-sm text-muted-foreground">{product.durations.join(', ')}</p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">Gestionar</Button>
+                    <Button variant="outline" size="sm" onClick={() => handleManageAccounts(product.id)}>
+                      Gestionar
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -110,6 +158,84 @@ export default function Products() {
           )}
         </div>
       )}
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Editar Producto</DialogTitle>
+            <DialogDescription>
+              Actualiza los detalles del producto seleccionado.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Nombre
+              </Label>
+              <Input
+                id="name"
+                value={currentProduct?.name || ""}
+                onChange={(e) => setCurrentProduct(currentProduct ? {...currentProduct, name: e.target.value} : null)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="maxProfiles" className="text-right">
+                Perfiles Máx.
+              </Label>
+              <Input
+                id="maxProfiles"
+                type="number"
+                value={currentProduct?.maxProfiles || 0}
+                onChange={(e) => setCurrentProduct(currentProduct ? {
+                  ...currentProduct, 
+                  maxProfiles: parseInt(e.target.value)
+                } : null)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="durations" className="text-right">
+                Duraciones
+              </Label>
+              <Input
+                id="durations"
+                value={currentProduct?.durations.join(', ') || ""}
+                onChange={(e) => setCurrentProduct(currentProduct ? {
+                  ...currentProduct, 
+                  durations: e.target.value.split(',').map(d => d.trim())
+                } : null)}
+                className="col-span-3"
+                placeholder="1 mes, 3 meses, 6 meses"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="active" className="text-right">
+                Activo
+              </Label>
+              <div className="flex items-center space-x-2 col-span-3">
+                <Switch
+                  id="active"
+                  checked={currentProduct?.active || false}
+                  onCheckedChange={(checked) => setCurrentProduct(currentProduct ? {
+                    ...currentProduct, 
+                    active: checked
+                  } : null)}
+                />
+                <Label htmlFor="active">
+                  {currentProduct?.active ? "Producto Activo" : "Producto Inactivo"}
+                </Label>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveProduct}>Guardar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageLayout>
   );
 }
