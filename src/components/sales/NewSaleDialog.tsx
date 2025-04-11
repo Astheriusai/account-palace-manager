@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -124,7 +125,7 @@ const NewSaleDialog = ({ open, onOpenChange, clients, products }: NewSaleDialogP
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className={`${isMobile ? 'w-[95%] p-3' : 'w-[90%] sm:max-w-[550px] p-4'} overflow-y-auto max-h-[90vh]`}>
+      <DialogContent className={`${isMobile ? 'w-[95%] p-3' : 'w-[90%] sm:max-w-[600px] p-4'} overflow-y-auto max-h-[90vh]`}>
         <DialogHeader className="text-center">
           <DialogTitle className="text-xl sm:text-2xl font-bold">Nueva Venta</DialogTitle>
           <DialogDescription className="text-center text-sm sm:text-base mx-auto max-w-[90%]">

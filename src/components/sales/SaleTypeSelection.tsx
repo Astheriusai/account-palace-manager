@@ -22,7 +22,7 @@ const SaleTypeSelection = ({ onSaleTypeSelect }: SaleTypeSelectionProps) => {
         <span className={`${isMobile ? 'text-base' : 'text-lg'} font-medium text-center`}>
           Cuentas Completas
         </span>
-        <p className="font-normal text-center text-xs sm:text-sm text-muted-foreground mt-1 w-full">
+        <p className="font-normal text-center text-xs sm:text-sm text-muted-foreground mt-1 px-1 line-clamp-2">
           Cuentas completas con acceso a todos los perfiles
         </p>
       </Button>
@@ -36,7 +36,7 @@ const SaleTypeSelection = ({ onSaleTypeSelect }: SaleTypeSelectionProps) => {
         <span className={`${isMobile ? 'text-base' : 'text-lg'} font-medium text-center`}>
           Pantallas
         </span>
-        <p className="font-normal text-center text-xs sm:text-sm text-muted-foreground mt-1 w-full">
+        <p className="font-normal text-center text-xs sm:text-sm text-muted-foreground mt-1 px-1 line-clamp-2">
           Perfiles individuales de diferentes cuentas
         </p>
       </Button>
@@ -53,7 +53,7 @@ const SaleTypeSelection = ({ onSaleTypeSelect }: SaleTypeSelectionProps) => {
         <span className={`${isMobile ? 'text-base' : 'text-lg'} font-medium text-center`}>
           Mixta
         </span>
-        <p className="font-normal text-center text-xs sm:text-sm text-muted-foreground mt-1 w-full">
+        <p className="font-normal text-center text-xs sm:text-sm text-muted-foreground mt-1 px-1 line-clamp-2">
           Combinación de cuentas completas y perfiles individuales
         </p>
       </Button>
