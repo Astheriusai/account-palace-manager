@@ -9,7 +9,198 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      accounts: {
+        Row: {
+          available: boolean | null
+          created_at: string
+          email: string
+          expiration_date: string | null
+          id: string
+          password: string
+          purchase_date: string
+          service_id: string
+        }
+        Insert: {
+          available?: boolean | null
+          created_at?: string
+          email: string
+          expiration_date?: string | null
+          id?: string
+          password: string
+          purchase_date?: string
+          service_id: string
+        }
+        Update: {
+          available?: boolean | null
+          created_at?: string
+          email?: string
+          expiration_date?: string | null
+          id?: string
+          password?: string
+          purchase_date?: string
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          account_id: string
+          created_at: string
+          id: string
+          in_use: boolean | null
+          profile_name: string
+          sale_id: string | null
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          id?: string
+          in_use?: boolean | null
+          profile_name: string
+          sale_id?: string | null
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          id?: string
+          in_use?: boolean | null
+          profile_name?: string
+          sale_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales: {
+        Row: {
+          account_id: string
+          client_id: string | null
+          created_at: string
+          duration: string
+          expiration_date: string
+          id: string
+          price: number
+          service_id: string
+          start_date: string
+        }
+        Insert: {
+          account_id: string
+          client_id?: string | null
+          created_at?: string
+          duration: string
+          expiration_date: string
+          id?: string
+          price: number
+          service_id: string
+          start_date?: string
+        }
+        Update: {
+          account_id?: string
+          client_id?: string | null
+          created_at?: string
+          duration?: string
+          expiration_date?: string
+          id?: string
+          price?: number
+          service_id?: string
+          start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          active: boolean | null
+          created_at: string
+          id: string
+          max_profiles: number
+          name: string
+          price: number
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string
+          id?: string
+          max_profiles: number
+          name: string
+          price: number
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string
+          id?: string
+          max_profiles?: number
+          name?: string
+          price?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
