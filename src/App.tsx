@@ -11,6 +11,7 @@ import Products from "./pages/Products";
 import Clients from "./pages/Clients";
 import Sales from "./pages/Sales";
 import Accounts from "./pages/Accounts";
+import ProductAccounts from "./pages/ProductAccounts"; // Add this new import
 import Profiles from "./pages/Profiles";
 import Settings from "./pages/Settings";
 import MobileApp from "./pages/MobileApp";
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/clients" element={<Clients />} />
           <Route path="/sales" element={<Sales />} />
           <Route path="/accounts" element={<Accounts />} />
+          <Route path="/accounts/:productId" element={<ProductAccounts />} /> {/* Add this new route */}
           <Route path="/profiles" element={<Profiles />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/mobile-app" element={<MobileApp />} />

@@ -13,8 +13,8 @@ interface ProductCardProps {
 export function ProductCard({ product, onEdit }: ProductCardProps) {
   const navigate = useNavigate();
   
-  const handleManageAccounts = (productId: string) => {
-    navigate(`/accounts?productId=${productId}`);
+  const handleManageAccounts = (productId: string, productName: string) => {
+    navigate(`/accounts/${productId}`, { state: { productName } });
   };
 
   return (
@@ -40,7 +40,7 @@ export function ProductCard({ product, onEdit }: ProductCardProps) {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => handleManageAccounts(product.id)}
+            onClick={() => handleManageAccounts(product.id, product.name)}
           >
             Gestionar
           </Button>
