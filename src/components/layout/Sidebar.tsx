@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -47,7 +46,6 @@ export function Sidebar() {
 
   const navigationItems = [
     { icon: Home, label: "Dashboard", href: "/" },
-    { icon: Package, label: "Servicios", href: "/services" },
     { icon: Package, label: "Productos", href: "/products" },
     { icon: Users, label: "Clientes", href: "/clients" },
     { icon: ShoppingCart, label: "Ventas", href: "/sales" },

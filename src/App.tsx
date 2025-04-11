@@ -6,12 +6,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Services from "./pages/Services";
 import Products from "./pages/Products";
 import Clients from "./pages/Clients";
 import Sales from "./pages/Sales";
 import Accounts from "./pages/Accounts";
-import ProductAccounts from "./pages/ProductAccounts"; // Add this new import
+import ProductAccounts from "./pages/ProductAccounts";
 import Profiles from "./pages/Profiles";
 import Settings from "./pages/Settings";
 import MobileApp from "./pages/MobileApp";
@@ -26,12 +25,11 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/services" element={<Services />} />
           <Route path="/products" element={<Products />} />
           <Route path="/clients" element={<Clients />} />
           <Route path="/sales" element={<Sales />} />
           <Route path="/accounts" element={<Accounts />} />
-          <Route path="/accounts/:productId" element={<ProductAccounts />} /> {/* Add this new route */}
+          <Route path="/accounts/:productId" element={<ProductAccounts />} />
           <Route path="/profiles" element={<Profiles />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/mobile-app" element={<MobileApp />} />
